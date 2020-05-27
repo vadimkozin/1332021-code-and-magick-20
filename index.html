@@ -181,6 +181,28 @@
   </div>
 </template>
 
+<script>
+  var fireballSize = 22,  // размер фаербола
+      wizardSpeed = 3,    // скорость мага
+      wizardWidth = 70;   // ширина мага
+
+  function getFireballSpeed(isWindFromLeft) {
+    return (isWindFromLeft) ? 5 : 2;
+  }
+
+  function getWizardHeight() {
+    return 1.337 * wizardWidth;
+  }
+
+  function getWizardX(gameWidth) {
+    return (gameWidth - wizardWidth) / 2;
+  }
+
+  function getWizardY(gameHeight) {
+    return gameHeight - (gameHeight * 2 / 3);
+  }
+</script>
+
 <script src="js/game.js"></script>
 
 </body>
