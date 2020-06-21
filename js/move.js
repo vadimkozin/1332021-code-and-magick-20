@@ -9,7 +9,7 @@ window.move = (function () {
 
   function init(movableObject, handle, isReturnAsItWas) {
 
-    isReturnAsItWas = isReturnAsItWas ? isReturnAsItWas : false;
+    isReturnAsItWas = isReturnAsItWas || false;
 
     // изначальные координаты передвигаемого объекта
     // в них нужно вернуть объект при отпускании мыши если isReturnAsItWas=true
