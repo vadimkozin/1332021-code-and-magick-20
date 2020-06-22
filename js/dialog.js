@@ -5,6 +5,7 @@
   var setupOpen = document.querySelector('.setup-open');
   var setupClose = document.querySelector('.setup-close');
   var handle = setup.querySelector('.upload');
+  var form = setup.querySelector('.setup-wizard-form');
 
   var dialog = (function (movableObject) {
 
@@ -69,5 +70,25 @@
   setupClose.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, closePopup);
   });
+
+  // форма
+  function onFormSubmit(evt) {
+
+    window.backend.save(new FormData(form), onFormSaved, onFormError);
+
+    evt.preventDefault();
+
+    function onFormSaved() {
+      setup.classList.add('hidden');
+      window.util.showMessage('Данные сохранены');
+    }
+
+    function onFormError(message) {
+      window.util.showMessage(message, false, 5000);
+    }
+
+  }
+
+  form.addEventListener('submit', onFormSubmit);
 
 })();

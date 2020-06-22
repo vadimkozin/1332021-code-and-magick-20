@@ -7,6 +7,7 @@
     EYES_COLORS: ['black', 'red', 'blue', 'yellow', 'green'],
     FIREBOLL_COLORS: ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'],
     WIZARD_COUNT: 4,
+    URL_DATA: 'https://javascript.pages.academy/code-and-magick/data',
   };
 
   var random = {
@@ -33,24 +34,55 @@
       return (index)
         ? item1 + ' ' + item2
         : item2 + ' ' + item1;
+    },
+
+    getSetValues: function (count, max) {
+      var array = [];
+
+      if (count > max) {
+        throw new Error('Ошибка: количество значений превышает максимальное.');
+      }
+
+      do {
+        var value = Math.floor(Math.random() * max); // 0 .. max
+        if (array.indexOf(value) === -1) {
+          array.push(value);
+        }
+      } while (array.length < count);
+
+      return array;
     }
   };
 
-  function createWizards() {
-    var wizards = [];
-    for (var i = 0; i < cfg.WIZARD_COUNT; i++) {
-      wizards.push(createWizard(cfg.NAMES, cfg.SURNAMES, cfg.COAT_COLORS, cfg.EYES_COLORS));
+  function loadWizards(callback) {
+
+    window.backend.load(cfg.URL_DATA, onLoad, onError);
+
+    function onLoad(data) {
+      var wizards = [];
+
+      // ТЗ: Для отрисовки в блоке похожих волшебников используйте 4 произвольных записи из полученных данных.
+      var indexes = random.getSetValues(cfg.WIZARD_COUNT, data.length);
+
+      for (var i = 0; i < indexes.length; i++) {
+        wizards.push(createOne(data[indexes[i]]));
+      }
+
+      callback(wizards);
     }
 
-    return wizards;
-  }
+    function createOne(item) {
+      var obj = {};
+      obj.name = item.name;
+      obj.coatColor = item.colorCoat;
+      obj.eyesColor = item.colorEyes;
+      return obj;
+    }
 
-  function createWizard(names, surnames, coatColors, eyesColors) {
-    var obj = {};
-    obj.name = random.getFromArrays(names, surnames);
-    obj.coatColor = random.getFromArray(coatColors);
-    obj.eyesColor = random.getFromArray(eyesColors);
-    return obj;
+    function onError(message) {
+      window.util.showMessage(message, false, 5000);
+    }
+
   }
 
   function renderWizard(wizard) {
@@ -84,15 +116,17 @@
     .content
     .querySelector('.setup-similar-item');
 
-  // создание волшебников
-  var wizards = createWizards();
 
-  // добавление волшебников в блок похожих персонажей
-  similarListElement.appendChild(createSimilarListWizards(wizards));
+  // загрузка волшебников из сети
+  loadWizards(onWizardsLoad);
 
-  // отображение волшебников в DOM
-  dialog.querySelector('.setup-similar').classList.remove('hidden');
+  function onWizardsLoad(wizards) {
+    // добавление волшебников в блок похожих персонажей
+    similarListElement.appendChild(createSimilarListWizards(wizards));
 
+    // отображение волшебников в DOM
+    dialog.querySelector('.setup-similar').classList.remove('hidden');
+  }
 
   var form = document.querySelector('.setup-wizard-form');
   // Ссылки для назначения цвета мантии, глаз волщебника и цвета фаерболов
