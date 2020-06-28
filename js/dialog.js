@@ -1,4 +1,6 @@
 'use strict';
+// все действия с окном диалога (popup)
+
 (function () {
 
   var setup = document.querySelector('.setup');
